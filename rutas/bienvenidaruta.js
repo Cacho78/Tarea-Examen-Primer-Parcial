@@ -166,7 +166,7 @@ rutas.get('/listaporusuario/:usuarioId', async (peticion, respuesta) =>{
 
        const usuario = await usuarioModel.findById(usuarioId);
        if (!usuario)
-        return res.status(404).json({mensage: 'usuario no encontrado'});
+            return respuesta.status(404).json({mensage: 'usuario no encontrado'});
         const lista = await bienvenidaModel.find({usuario: usuarioId}).populate('usuario');
         respuesta.json(lista);
 
@@ -176,14 +176,14 @@ rutas.get('/listaporusuario/:usuarioId', async (peticion, respuesta) =>{
    }
 });
 //REPORTES 2
-//sumar porciones de recetas por Usuarios
-rutas.get('nodemon', async (req, res) => {
+//mostrar todos los vehiculos de la gestion 2020 y 2024 incluyendo la informacion del usuario 
+rutas.get('/sumas', async (req, res) => {
     try {   
         const usuarios = await usuarioModel.find();
         const reporte = await Promise.all(
             usuarios.map( async ( usuario1 ) => {
                 const listas = await bienvenidaModel.find({ usuario: usuario1._id});
-                const totallista = listas.reduce((sum, receta) => sum + listas.listas, 0);
+                const totallista = listas.reduce((sum, bienvenida) => sum + bienvenida.año, 0);
                 return {
                     usuario: {
                         _id: usuario1._id,
