@@ -177,7 +177,14 @@ rutas.get('/listaporusuario/:usuarioId', async (peticion, respuesta) =>{
 });
 //REPORTES 2
 //mostrar todos los vehiculos de la gestion 2020 y 2024 incluyendo la informacion del usuario 
-rutas.get('/sumas', async (req, res) => {
+
+
+
+
+
+
+
+/*rutas.get('/gestion', async (req, res) => {
     try {   
         const usuarios = await usuarioModel.find();
         const reporte = await Promise.all(
@@ -202,7 +209,33 @@ rutas.get('/sumas', async (req, res) => {
     } catch (error){
         res.status(500).json({ mensage :  error.message})
     }
-})
+})*/
+
+// Endpoint para obtener la información relacionada entre las colecciones "bienvenida" y "monitoreo"
+rutas.get('/relacion', async (req, res) => {
+    try {
+        // Obtener todos los documentos de la colección "bienvenida"
+        const bienvenidas = await bienvenidaModel.find();
+
+        // Recorrer cada documento de la colección "bienvenida"
+        const resultado = await Promise.all(bienvenidas.map(async (bienvenida) => {
+            // Buscar el documento de la colección "monitoreo" relacionado con el documento actual de "bienvenida"
+            const monitoreoRelacionado = await monitoreoModel.findOne({ bienvenida: bienvenida._id });
+
+            // Devolver un objeto que contenga la información de la "bienvenida" y la "monitoreo" relacionadas
+            return {
+                bienvenida,
+                monitoreo: monitoreoRelacionado
+            };
+        }));
+
+        res.json(resultado);
+    } catch (error) {
+        res.status(500).json({ mensaje: error.message });
+    }
+});
+
+
 
 module.exports = rutas;
 
